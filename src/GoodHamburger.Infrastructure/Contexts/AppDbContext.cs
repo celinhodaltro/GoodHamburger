@@ -15,4 +15,12 @@ public class ApplicationDbContext : DbContext
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
 
+
+    protected override void OnConfiguring(DbContextOptionsBuilder options)
+    {
+        if (!options.IsConfigured)
+        {
+            options.UseInMemoryDatabase("HamburgerDb");
+        }
+    }
 }
