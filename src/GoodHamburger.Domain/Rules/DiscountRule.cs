@@ -26,7 +26,7 @@ namespace GoodHamburger.Domain.Rules
             else if (hasSandwich && hasFries)
                 order.PercentDiscount = 0.10m;
 
-            order.Discount = order.Subtotal * order.Discount;
+            order.Discount = order.Subtotal * order.PercentDiscount;
             order.Total = order.Subtotal - order.Discount;
 
         }
