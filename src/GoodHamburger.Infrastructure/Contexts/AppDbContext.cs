@@ -23,4 +23,13 @@ public class ApplicationDbContext : DbContext
             options.UseInMemoryDatabase("HamburgerDb");
         }
     }
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+
+        modelBuilder.Entity<Product>()
+            .HasData(ProductSeed.Data());
+
+        base.OnModelCreating(modelBuilder);
+    }
 }
