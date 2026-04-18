@@ -7,10 +7,10 @@ using Xunit;
 
 namespace GoodHamburger.Tests.Domain;
 
-public class OrderTests
+public class DuplicateCategoryRuleTests
 {
     [Fact]
-    public void Should_Not_Allow_Two_Categories()
+    public void Should_Not_Allow_Two_Sandwiches()
     {
         var product1 = new Product("X Burger", ProductCategory.Sandwich, 5m);
         var product2 = new Product("X Egg", ProductCategory.Sandwich, 4.5m);
