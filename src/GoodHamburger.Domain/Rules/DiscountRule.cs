@@ -1,5 +1,5 @@
 ﻿using GoodHamburger.Domain.Entities;
-using GoodHamburger.Domain.Enum;
+using GoodHamburger.Shared.Enum;
 
 namespace GoodHamburger.Domain.Rules
 {

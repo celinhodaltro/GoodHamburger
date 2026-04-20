@@ -1,4 +1,4 @@
-﻿using GoodHamburger.Domain.Enum;
+﻿using GoodHamburger.Shared.Enum;
 
 namespace GoodHamburger.Domain.Entities;
 public class Product : Entity
