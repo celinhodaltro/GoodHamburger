@@ -1,5 +1,4 @@
 ﻿using GoodHamburger.Domain.Entities;
-using GoodHamburger.Infrastructure.Persistence.Seeds;
 using Microsoft.EntityFrameworkCore;
 
 namespace GoodHamburger.Infrastructure.Persistence;
@@ -26,9 +25,6 @@ public class ApplicationDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
-
-        modelBuilder.Entity<Product>()
-            .HasData(ProductSeed.Data());
 
         base.OnModelCreating(modelBuilder);
     }
