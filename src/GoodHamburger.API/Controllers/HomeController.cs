@@ -1,15 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace GoodHamburger.API.Controllers
+namespace GoodHamburger.API.Controllers;
+
+[ApiController]
+[Route("[controller]")]
+public class HomeController : ControllerBase
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class HomeController : ControllerBase
+
+    public HomeController()
     {
-
-        public HomeController()
-        {
-        }
-
     }
+
 }
