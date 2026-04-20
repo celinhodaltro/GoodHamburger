@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using GoodHamburger.Application.Queries;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GoodHamburger.API.Controllers;
 
@@ -6,9 +8,25 @@ namespace GoodHamburger.API.Controllers;
 [Route("[controller]")]
 public class OrderController : Controller
 {
-    [HttpGet]
-    public IActionResult Index()
+    private readonly IMediator _mediator;
+
+    public OrderController(IMediator mediator)
     {
-        return Ok();
+        _mediator = mediator;
     }
+
+    [HttpGet]
+    public IActionResult GetOrders()
+    {
+        var orders = _mediator.Send(new GetOrdersQuery());
+        return Ok(orders);
+    }
+
+    [HttpGet("{id}")]
+    public IActionResult GetOrderById(Guid id)
+    {
+        var order = _mediator.Send(new GetOrderByIdQuery(id));
+        return Ok(order);
+    }
+
 }
