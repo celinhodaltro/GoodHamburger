@@ -1,3 +1,4 @@
+using GoodHamburger.API.Middlewares;
 using GoodHamburger.Application;
 using GoodHamburger.Infrastructure.Seeds;
 
@@ -7,6 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddExceptionHandler<GlobalExceptionMiddleware>();
+builder.Services.AddProblemDetails();
 
 builder.Services.AddContext()
                 .AddMapperServices()
@@ -22,6 +26,7 @@ if (app.Environment.IsDevelopment())
 
 await app.Services.ApplySeedAsync();
 
+app.UseExceptionHandler();
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
