@@ -1,4 +1,5 @@
 ﻿using GoodHamburger.Domain.Exceptions;
+using GoodHamburger.Domain.Rules;
 
 namespace GoodHamburger.Domain.Entities;
 public class Order : Entity
@@ -18,6 +19,8 @@ public class Order : Entity
 
         orderItem.OrderId = Id;
         _orderItems.Add(orderItem);
+
+        this.ApplyDiscountRule();
 
         return orderItem;
     }
