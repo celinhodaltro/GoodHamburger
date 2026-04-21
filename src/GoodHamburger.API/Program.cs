@@ -16,6 +16,20 @@ builder.Services.AddContext()
                 .AddMapperServices()
                 .AddMediatorServices();
 
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", policy =>
+    {
+        policy.WithOrigins(
+                "https://localhost:5001", 
+                "http://localhost:5101"
+              )
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -26,6 +40,7 @@ if (app.Environment.IsDevelopment())
 
 await app.Services.ApplySeedAsync();
 
+app.UseCors("CorsPolicy");
 app.UseExceptionHandler();
 app.UseHttpsRedirection();
 app.UseAuthorization();
