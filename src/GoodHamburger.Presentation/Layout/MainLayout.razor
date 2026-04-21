@@ -1,8 +1,52 @@
 ﻿@inherits LayoutComponentBase
-<div class="page">
-    <main>
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
+@inject NavigationManager Nav
+
+<div class="menu-wrapper">
+
+    <div class="menu-header">
+
+        <div class="header-col left">
+            <img src="imgs/logo.png"
+                 alt="Good Hamburger"
+                 class="logo"
+                 @onclick="GoDefault"
+                 style="cursor:pointer;">
+        </div>
+
+        <div class="header-col center">
+            <div class="title-box">
+                <h1>@PageTitle</h1>
+            </div>
+        </div>
+
+        <div class="header-col right">
+
+                <div class="info-box">
+                    <div>(11) 99999-9999</div>
+                    <div>Rua Exemplo, 215</div>
+                    <div>São Paulo - SP</div>
+                </div>
+        </div>
+
+    </div>
+
+    @Body
+
 </div>
+
+@code {
+    private void GoDefault()
+    {
+        Nav.NavigateTo("/");
+    }
+
+    private string PageTitle =>
+    Nav.Uri.ToLower() switch
+    {
+        var url when url.Contains("/orders") => "PEDIDOS",
+        var url when url.Contains("/menu") => "MENU",
+        _ => "GOOD HAMBURGER"
+    };
+
+
+}

@@ -1,5 +1,96 @@
-﻿<h3>Index</h3>
+﻿@page "/orders"
+
+@inject OrderService OrderService
+@inject NavigationManager Nav
+
+
+<div class="orders-content">
+
+    <section class="menu-section">
+
+        @if (loading)
+        {
+            <div class="empty-state">Carregando pedidos...</div>
+        }
+        else
+        {
+            <table class="orders-table">
+
+                <thead>
+                    <tr>
+                        <th class="col-action"></th>
+                        <th>ID</th>
+                        <th>Subtotal</th>
+                        <th>Desconto</th>
+                        <th>% Desc.</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr class="add-row">
+                        <td class="col-action">
+                            <button class="add-btn" @onclick="GoToCreateOrder">+</button>
+                        </td>
+                        <td class="text-start" colspan="5">Criar Pedido</td>
+                    </tr>
+
+                    @if (orders.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="6" class="empty-row">
+                                Nenhum pedido encontrado.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var order in orders)
+                        {
+                            <tr>
+                                <td></td>
+                                <td>#@order.Id.ToString()[..8]</td>
+                                <td>@order.Subtotal.ToString("C")</td>
+                                <td>@order.Discount.ToString("C")</td>
+                                <td>@order.PercentDiscount%</td>
+                                <td class="total">@order.Total.ToString("C")</td>
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+
+            </table>
+        }
+    </section>
+
+</div>
+
 
 @code {
+
+    private List<OrderDto> orders = [];
+    private bool loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var response = await OrderService.GetOrdersAsync();
+
+            if (response is not null)
+                orders = response.Orders;
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+
+    private void GoToCreateOrder()
+    {
+        Nav.NavigateTo("/menu/");
+    }
 
 }

@@ -1,5 +1,79 @@
-﻿<h3>Index</h3>
+﻿@page "/menu/"
+@using GoodHamburger.Shared.Enum
+@inject MenuService MenuService
+
+<div class="menu-grid">
+
+    <div>
+
+        @foreach (var category in LeftColumn)
+        {
+            <section class="menu-section">
+
+                <h2>@category</h2>
+
+                @foreach (var item in menu[category])
+                {
+                    <div class="menu-item">
+                        <div>
+                            <div class="item-name">@item.Name</div>
+                            <div class="item-desc">@item.Description</div>
+                        </div>
+
+                        <div class="item-price">
+                            @item.Price.ToString("C")
+                        </div>
+                    </div>
+                }
+
+            </section>
+        }
+
+    </div>
+
+    <div>
+
+        @foreach (var category in RightColumn)
+        {
+            <section class="menu-section">
+
+                <h2>@category</h2>
+
+                @foreach (var item in menu[category])
+                {
+                    <div class="menu-item">
+                        <div>
+                            <div class="item-name">@item.Name</div>
+                            <div class="item-desc">@item.Description</div>
+                        </div>
+
+                        <div class="item-price">
+                            @item.Price.ToString("C")
+                        </div>
+                    </div>
+                }
+
+            </section>
+        }
+
+    </div>
+
+</div>
 
 @code {
+    private Dictionary<ProductCategory, List<ProductDto>> menu = new();
 
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await MenuService.GetMenuAsync();
+
+        var products = response?.Products ?? new List<ProductDto>();
+
+        menu = products
+            .GroupBy(p => p.Category)
+            .ToDictionary(g => g.Key, g => g.ToList());
+    }
+
+    private List<ProductCategory> LeftColumn => menu.Keys.Take(menu.Count / 2 + menu.Count % 2).ToList();
+    private List<ProductCategory> RightColumn => menu.Keys.Skip(menu.Count / 2 + menu.Count % 2).ToList();
 }
