@@ -1,7 +1,10 @@
-﻿using GoodHamburger.Application.Products.Mappings;
+﻿using FluentValidation;
+using GoodHamburger.Application.Commands.CreateOrderCommand;
+using GoodHamburger.Application.Common.Behaviors;
+using GoodHamburger.Application.Products.Mappings;
 using GoodHamburger.Application.Queries;
 using GoodHamburger.Infrastructure.Persistence;
-using GoodHamburger.Infrastructure.Seeds;
+using MediatR;
 using System.Reflection;
 
 namespace GoodHamburger.Application;
@@ -17,6 +20,9 @@ public static class DependencyInjection
         {
             cfg.RegisterServicesFromAssembly(typeof(GetMenuQuery).Assembly);
         });
+
+        services.AddValidatorsFromAssembly(typeof(CreateOrderValidator).Assembly);
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
         return services;
     }
