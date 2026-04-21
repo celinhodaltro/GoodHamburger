@@ -1,4 +1,6 @@
-﻿using GoodHamburger.Application.Queries;
+﻿using GoodHamburger.Application.Commands.CreateOrderCommand;
+using GoodHamburger.Application.Queries;
+using GoodHamburger.Shared.DTOs.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,17 +18,23 @@ public class OrderController : Controller
     }
 
     [HttpGet]
-    public IActionResult GetOrders()
+    public async Task<IActionResult> GetOrders()
     {
-        var orders = _mediator.Send(new GetOrdersQuery());
+        var orders = await _mediator.Send(new GetOrdersQuery());
         return Ok(orders);
     }
 
     [HttpGet("{id}")]
-    public IActionResult GetOrderById(Guid id)
+    public async Task<IActionResult> GetOrderById(Guid id)
     {
-        var order = _mediator.Send(new GetOrderByIdQuery(id));
+        var order = await _mediator.Send(new GetOrderByIdQuery(id));
         return Ok(order);
     }
 
+    [HttpPost]
+    public async Task<IActionResult> CreateOrder(CreateOrderRequest request)
+    {
+        var orderId = await _mediator.Send(new CreateOrderCommand(request));
+        return Ok(orderId);
+    }
 }
