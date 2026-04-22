@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using GoodHamburger.Domain.Entities;
-using GoodHamburger.Domain.Enum;
 using GoodHamburger.Domain.Rules;
+using GoodHamburger.Shared.Enum;
 using Xunit;
 
 namespace GoodHamburger.Tests.Domain;
@@ -13,14 +13,11 @@ public class DiscountRuleTests
     {
         var order = new Order();
 
-        order.AddItem(new OrderItem(
-            new Product("X Burger", ProductCategory.Sandwich, 5m)));
+        order.AddItem(new OrderItem(new Product("X Burger", ProductCategory.Sandwich, 5m)));
 
-        order.AddItem(new OrderItem(
-            new Product("Batata frita", ProductCategory.Fries, 2m)));
+        order.AddItem(new OrderItem(new Product("Batata frita", ProductCategory.Fries, 2m)));
 
-        order.AddItem(new OrderItem(
-            new Product("Refrigerante", ProductCategory.Drink, 2.5m)));
+        order.AddItem(new OrderItem(new Product("Refrigerante", ProductCategory.Drink, 2.5m)));
 
         order.ApplyDiscountRule();
 
@@ -35,11 +32,9 @@ public class DiscountRuleTests
     {
         var order = new Order();
 
-        order.AddItem(new OrderItem(
-            new Product("X Burger", ProductCategory.Sandwich, 5m)));
+        order.AddItem(new OrderItem(new Product("X Burger", ProductCategory.Sandwich, 5m)));
 
-        order.AddItem(new OrderItem(
-            new Product("Refrigerante", ProductCategory.Drink, 2.5m)));
+        order.AddItem(new OrderItem( new Product("Refrigerante", ProductCategory.Drink, 2.5m)));
 
         order.ApplyDiscountRule();
 
@@ -54,11 +49,9 @@ public class DiscountRuleTests
     {
         var order = new Order();
 
-        order.AddItem(new OrderItem(
-            new Product("X Burger", ProductCategory.Sandwich, 5m)));
+        order.AddItem(new OrderItem(new Product("X Burger", ProductCategory.Sandwich, 5m)));
 
-        order.AddItem(new OrderItem(
-            new Product("Batata frita", ProductCategory.Fries, 2m)));
+        order.AddItem(new OrderItem(new Product("Batata frita", ProductCategory.Fries, 2m)));
 
         order.ApplyDiscountRule();
 
@@ -73,8 +66,7 @@ public class DiscountRuleTests
     {
         var order = new Order();
 
-        order.AddItem(new OrderItem(
-            new Product("X Burger", ProductCategory.Sandwich, 5m)));
+        order.AddItem(new OrderItem(new Product("X Burger", ProductCategory.Sandwich, 5m)));
 
         order.ApplyDiscountRule();
 
