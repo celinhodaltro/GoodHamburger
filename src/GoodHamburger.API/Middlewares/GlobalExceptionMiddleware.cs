@@ -41,6 +41,12 @@ public class GlobalExceptionMiddleware : IExceptionHandler
                 Status = 400,
                 Detail = exception.Message
             },
+            ItemAlreadyDeletedException => new ProblemDetails
+            {
+                Title = "Recurso ja foi deletado.",
+                Status = 400,
+                Detail = exception.Message
+            },
             _ => new ProblemDetails
             {
                 Title = "Erro interno do servidor",
