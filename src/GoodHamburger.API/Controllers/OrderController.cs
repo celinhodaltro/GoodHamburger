@@ -1,4 +1,5 @@
-﻿using GoodHamburger.Application.Commands.CreateOrderCommand;
+﻿using GoodHamburger.Application.Commands;
+using GoodHamburger.Application.Commands.CreateOrderCommand;
 using GoodHamburger.Application.Queries;
 using GoodHamburger.Shared.DTOs.Requests;
 using MediatR;
@@ -24,10 +25,10 @@ public class OrderController : Controller
         return Ok(orders);
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetOrderById(Guid id)
+    [HttpGet("{orderId}")]
+    public async Task<IActionResult> GetOrderById(Guid orderId)
     {
-        var order = await _mediator.Send(new GetOrderByIdQuery(id));
+        var order = await _mediator.Send(new GetOrderByIdQuery(orderId));
         return Ok(order);
     }
 
@@ -36,5 +37,19 @@ public class OrderController : Controller
     {
         var orderId = await _mediator.Send(new CreateOrderCommand(request));
         return Ok(orderId);
+    }
+
+    [HttpDelete("{orderId}")]
+    public async Task<IActionResult> DeleteOrder(Guid orderId)
+    {
+        var result = await _mediator.Send(new DeleteOrderCommand(orderId));
+        return Ok(result);
+    }
+
+    [HttpPut()]
+    public async Task<IActionResult> UpdateOrder(UpdateOrderRequest request)
+    {
+        var result = await _mediator.Send(new UpdateOrderCommand(request));
+        return Ok(result);
     }
 }
