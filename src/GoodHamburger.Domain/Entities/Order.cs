@@ -14,8 +14,8 @@ public class Order : Entity
 
     public OrderItem AddItem(OrderItem orderItem)
     {
-        if (_orderItems.Any(x => x.Product!.Category == orderItem!.Product.Category))
-            throw new BusinessException("Já existe item dessa categoria.");
+        if (_orderItems.Any(x => x.Product!.Category == orderItem.Product!.Category))
+            throw new BusinessException($"Não é permitido adicionar mais de um item da mesma categoria no pedido. Categoria duplicada: '{orderItem.Product!.Category}'.");
 
         orderItem.OrderId = Id;
         _orderItems.Add(orderItem);
