@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "Presentation and API",
+    "Projects": [
+      {
+        "Path": "src\\GoodHamburger.API\\GoodHamburger.API.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\GoodHamburger.Presentation\\GoodHamburger.Presentation.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]
