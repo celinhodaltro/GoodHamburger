@@ -30,9 +30,8 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, Guid>
         var order = new Order();
 
         foreach (var product in products)
-        {
             order.AddItem(new OrderItem(product));
-        }
+        
 
         await _context.Orders.AddAsync(order, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);

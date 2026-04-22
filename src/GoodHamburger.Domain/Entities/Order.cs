@@ -24,4 +24,15 @@ public class Order : Entity
 
         return orderItem;
     }
+
+    public bool ClearItems()
+    {
+        _orderItems.Clear();
+        Subtotal = 0;
+        Discount = 0;
+        PercentDiscount = 0;
+        Total = 0;
+
+        return true;
+    }
 }

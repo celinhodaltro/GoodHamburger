@@ -19,35 +19,47 @@ public class OrderService
         return await _http.GetFromJsonAsync<GetOrdersResponse>("Order");
     }
 
-    public async Task<OrderDto?> GetOrderByIdAsync(Guid id)
+    public async Task<OrderDto?> GetOrderByIdAsync(Guid orderId)
     {
-        return await _http.GetFromJsonAsync<OrderDto>($"Order/{id}");
+        return await _http.GetFromJsonAsync<OrderDto>($"Order/{orderId}");
     }
 
     public async Task<Guid> CreateOrderAsync(CreateOrderRequest request)
     {
         var response = await _http.PostAsJsonAsync("Order", request);
 
-        if (!response.IsSuccessStatusCode)
-        {
-            var error = await response.Content.ReadFromJsonAsync<ErrorResponse>();
-            throw new Exception(error?.Detail ?? "Erro ao processar requisição.");
-        }
+        await EnsureSuccess(response);
 
         return await response.Content.ReadFromJsonAsync<Guid>();
     }
 
-    public async Task DeleteOrderAsync(Guid orderId)
+    public async Task<bool> DeleteOrderAsync(Guid orderId)
     {
         var response = await _http.DeleteAsync($"Order/{orderId}");
 
-        response.EnsureSuccessStatusCode();
+        await EnsureSuccess(response);
+
+        return await response.Content.ReadFromJsonAsync<bool>();
     }
 
-    public async Task UpdateOrderAsync(Guid id, UpdateOrderRequest request)
+    public async Task<bool> UpdateOrderAsync(UpdateOrderRequest request)
     {
-        var response = await _http.PutAsJsonAsync($"Order/{id}", request);
+        var response = await _http.PutAsJsonAsync("Order", request);
 
-        response.EnsureSuccessStatusCode();
+        await EnsureSuccess(response);
+
+        return await response.Content.ReadFromJsonAsync<bool>();
+    }
+
+    private static async Task EnsureSuccess(HttpResponseMessage response)
+    {
+        if (response.IsSuccessStatusCode)
+            return;
+
+        var error = await response.Content
+            .ReadFromJsonAsync<ApiResponse<object>>();
+
+        throw new Exception(
+            error?.Detail ?? "Erro ao processar requisição.");
     }
 }

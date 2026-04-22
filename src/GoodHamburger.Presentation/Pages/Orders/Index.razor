@@ -63,15 +63,11 @@
 
                                 <td class="actions-cell">
 
-                                    <button class="table-btn edit"
-                                    title="Editar"
-                                    @onclick='() => Nav.NavigateTo($"/menu/{order.Id})")'>
+                                    <button class="table-btn edit" title="Editar" @onclick='() => Nav.NavigateTo($"/menu/{order.Id}")'> 
                                         ✎
                                     </button>
 
-                                    <button class="table-btn delete"
-                                    title="Excluir"
-                                    @onclick="() => DeleteOrder(order.Id)">
+                                    <button class="table-btn delete" title="Excluir" @onclick="() => DeleteOrder(order.Id)">
                                         -
                                     </button>
 

@@ -1,5 +1,5 @@
 ﻿@page "/menu"
-@page "/order/{Id:guid}"
+@page "/menu/{Id:guid}"
 
 @inject MenuService MenuService
 @inject OrderService OrderService
@@ -123,12 +123,14 @@
     protected override async Task OnInitializedAsync()
     {
         await LoadMenu();
+        await LoadOrderProducts();
     }
-
 
     private async Task LoadMenu()
     {
-        var response = await MenuService.GetMenuAsync().HandleToast(Toast);
+        var response = await MenuService
+            .GetMenuAsync()
+            .HandleToast(Toast);
 
         var products = response?.Products ?? new();
 
@@ -137,8 +139,24 @@
             .ToDictionary(x => x.Key, x => x.ToList());
     }
 
-    private bool IsSelected(Guid productId)
-        => productsSelected.Any(x => x.Id == productId);
+    private async Task LoadOrderProducts()
+    {
+        if (Id is null || Id == Guid.Empty)
+            return;
+
+        var response = await MenuService
+            .GetProductsByOrderIdAsync(Id.Value)
+            .HandleToast(Toast);
+
+        var productIds = response ?? new();
+
+        productsSelected = menu
+            .SelectMany(x => x.Value)
+            .Where(x => productIds.Contains(x.Id))
+            .ToList();
+    }
+
+    private bool IsSelected(Guid productId) => productsSelected.Any(x => x.Id == productId);
 
     private void ToggleProduct(ProductDto product)
     {
@@ -150,7 +168,8 @@
 
     private void RemoveProduct(ProductDto product)
     {
-        var item = productsSelected.FirstOrDefault(x => x.Id == product.Id);
+        var item = productsSelected
+            .FirstOrDefault(x => x.Id == product.Id);
 
         if (item is not null)
             productsSelected.Remove(item);
@@ -158,14 +177,44 @@
 
     private async Task SaveOrder()
     {
+        if (Id.HasValue && Id.Value != Guid.Empty)
+        {
+            await UpdateOrder();
+            return;
+        }
+
+        await CreateOrder();
+    }
+
+    private async Task CreateOrder()
+    {
         var request = new CreateOrderRequest(productsSelected.Select(x => x.Id).ToList());
-        await OrderService.CreateOrderAsync(request).HandleToast(Toast, "Pedido salvo com sucesso!", ToastType.Success);
-        Nav.NavigateTo("/orders");
+
+        Guid result = await OrderService.CreateOrderAsync(request)
+                                        .HandleToast(Toast,"Pedido salvo com sucesso!", ToastType.Success);
+
+        if (result != Guid.Empty)
+            Nav.NavigateTo("/orders");
+    }
+
+    private async Task UpdateOrder()
+    {
+        var request = new UpdateOrderRequest(Id!.Value, productsSelected.Select(x => x.Id).ToList());
+
+        bool isDeleted = await OrderService.UpdateOrderAsync(request)
+                                       .HandleToast(Toast, "Pedido atualizado com sucesso!", ToastType.Success);
+
+        if(isDeleted)
+            Nav.NavigateTo("/orders");
     }
 
     private List<ProductCategory> LeftColumn =>
-        menu.Keys.Take(menu.Count / 2 + menu.Count % 2).ToList();
+        menu.Keys
+            .Take(menu.Count / 2 + menu.Count % 2)
+            .ToList();
 
     private List<ProductCategory> RightColumn =>
-        menu.Keys.Skip(menu.Count / 2 + menu.Count % 2).ToList();
+        menu.Keys
+            .Skip(menu.Count / 2 + menu.Count % 2)
+            .ToList();
 }
