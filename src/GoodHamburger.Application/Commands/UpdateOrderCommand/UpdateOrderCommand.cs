@@ -2,4 +2,4 @@
 using MediatR;
 
 namespace GoodHamburger.Application.Commands;
-public record UpdateOrderCommand(UpdateOrderRequest request) : IRequest<Guid>;
+public record UpdateOrderCommand(UpdateOrderRequest request) : IRequest<bool>;
