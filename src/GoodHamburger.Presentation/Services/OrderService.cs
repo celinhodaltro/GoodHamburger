@@ -57,7 +57,7 @@ public class OrderService
             return;
 
         var error = await response.Content
-            .ReadFromJsonAsync<ApiResponse<object>>();
+            .ReadFromJsonAsync<ErrorResponse>();
 
         throw new Exception(
             error?.Detail ?? "Erro ao processar requisição.");
