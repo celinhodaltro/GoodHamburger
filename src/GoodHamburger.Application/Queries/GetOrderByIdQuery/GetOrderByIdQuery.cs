@@ -3,5 +3,5 @@ using MediatR;
 
 namespace GoodHamburger.Application.Queries;
 
-public record GetOrderByIdQuery(Guid Id) : IRequest<OrderDto>;
+public record GetOrderByIdQuery(Guid OrderId) : IRequest<OrderDto>;
 

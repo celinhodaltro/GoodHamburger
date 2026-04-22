@@ -21,8 +21,7 @@ public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, Guid>
     public async Task<Guid> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
 
-        var products = await _context.Products.AsNoTracking()
-                                              .Where(p => request.request.ProductIds.Contains(p.Id))
+        var products = await _context.Products.Where(p => request.request.ProductIds.Contains(p.Id))
                                               .ToListAsync();
 
         if (!products.Any())

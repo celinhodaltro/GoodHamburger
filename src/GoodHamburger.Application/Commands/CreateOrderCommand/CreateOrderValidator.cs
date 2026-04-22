@@ -1,6 +1,4 @@
 ﻿using FluentValidation;
-using FluentValidation.Results;
-using GoodHamburger.Domain.Exceptions;
 
 namespace GoodHamburger.Application.Commands.CreateOrderCommand;
 
