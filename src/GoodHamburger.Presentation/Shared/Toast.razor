@@ -1,38 +1,33 @@
 ﻿@inject GoodHamburger.Presentation.Services.ToastService ToastService
 @implements IDisposable
 
-@if (visible)
-{
-    <div class="toast-container">
-        <div class="toast-box @(type.ToString().ToLower())">
-            @message
+<div class="toast-container">
+    @foreach (var toast in toasts)
+    {
+        <div class="toast-box @toast.Type.ToString().ToLower()">
+            @toast.Message
         </div>
-    </div>
-}
+    }
+</div>
 
 @code {
-    private bool visible;
-    private string message = "";
-    private ToastType type = ToastType.Info;
-
+    private List<ToastItem> toasts = new();
 
     protected override void OnInitialized()
     {
         ToastService.OnShow += ShowToast;
     }
 
-    private async void ShowToast(string msg, ToastType toastType)
+    private async void ShowToast(string msg, ToastType type)
     {
-        message = msg;
-        type = toastType;
-        visible = true;
+        var toast = new ToastItem(msg, type);
 
+        toasts.Add(toast);
         await InvokeAsync(StateHasChanged);
 
-        await Task.Delay(3500);
+        await Task.Delay(3000);
 
-        visible = false;
-
+        toasts.Remove(toast);
         await InvokeAsync(StateHasChanged);
     }
 
@@ -40,4 +35,6 @@
     {
         ToastService.OnShow -= ShowToast;
     }
+
+    private record ToastItem(string Message, ToastType Type);
 }
