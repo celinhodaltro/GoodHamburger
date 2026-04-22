@@ -22,6 +22,7 @@
         color: #1f2937;
         border-bottom: 1px dashed #e2e2e2;
         vertical-align: middle;
+        transition: .2s ease;
     }
 
     .orders-table tbody tr:hover {
@@ -32,6 +33,11 @@
     width: 70px;
     text-align: left;
     padding-right: 18px !important;
+}
+
+.col-actions {
+    width: 130px;
+    text-align: right;
 }
 
 .add-row td {
@@ -61,6 +67,46 @@
         background: rgba(16, 35, 61, 0.08);
     }
 
+.actions-cell {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.table-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+    .table-btn.edit {
+        border: 1px solid #2563EB;
+        color: #2563EB;
+        font-size: 16px;
+    }
+
+        .table-btn.edit:hover {
+            background: #2563EB;
+            color: white;
+            transform: scale(1.05);
+        }
+
+    .table-btn.delete {
+        border: 1px solid #d64545;
+        color: #d64545;
+        font-size: 22px;
+        line-height: 1;
+    }
+
+        .table-btn.delete:hover {
+            background: #d64545;
+            color: white;
+            transform: scale(1.05);
+        }
+
 .empty-row {
     text-align: center;
     color: #6b7280;
@@ -82,5 +128,23 @@
 .orders-table th:last-child,
 .orders-table td:last-child {
     padding-right: 0;
-    text-align: right;
+}
+
+@media (max-width: 900px) {
+
+    .orders-table thead th:nth-child(3),
+    .orders-table td:nth-child(3),
+    .orders-table thead th:nth-child(4),
+    .orders-table td:nth-child(4) {
+        display: none;
+    }
+
+    .actions-cell {
+        gap: 6px;
+    }
+
+    .table-btn {
+        width: 34px;
+        height: 34px;
+    }
 }

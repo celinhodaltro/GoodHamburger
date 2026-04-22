@@ -2,7 +2,7 @@
 
 @inject OrderService OrderService
 @inject NavigationManager Nav
-
+@inject ToastService Toast
 
 <div class="orders-content">
 
@@ -24,6 +24,7 @@
                         <th>Desconto</th>
                         <th>% Desc.</th>
                         <th>Total</th>
+                        <th class="col-actions">Action</th>
                     </tr>
                 </thead>
 
@@ -31,15 +32,18 @@
 
                     <tr class="add-row">
                         <td class="col-action">
-                            <button class="add-btn" @onclick="GoToCreateOrder">+</button>
+                            <button class="add-btn" @onclick='() =>  Nav.NavigateTo("/menu")'>+</button>
                         </td>
-                        <td class="text-start" colspan="5">Criar Pedido</td>
+
+                        <td class="text-start" colspan="6">
+                            Criar Pedido
+                        </td>
                     </tr>
 
                     @if (orders.Count == 0)
                     {
                         <tr>
-                            <td colspan="6" class="empty-row">
+                            <td colspan="7" class="empty-row">
                                 Nenhum pedido encontrado.
                             </td>
                         </tr>
@@ -50,11 +54,28 @@
                         {
                             <tr>
                                 <td></td>
+
                                 <td>#@order.Id.ToString()[..8]</td>
                                 <td>@order.Subtotal.ToString("C")</td>
                                 <td>@order.Discount.ToString("C")</td>
                                 <td>@order.PercentDiscount%</td>
                                 <td class="total">@order.Total.ToString("C")</td>
+
+                                <td class="actions-cell">
+
+                                    <button class="table-btn edit"
+                                    title="Editar"
+                                    @onclick='() => Nav.NavigateTo($"/menu/{order.Id})")'>
+                                        ✎
+                                    </button>
+
+                                    <button class="table-btn delete"
+                                    title="Excluir"
+                                    @onclick="() => DeleteOrder(order.Id)">
+                                        -
+                                    </button>
+
+                                </td>
                             </tr>
                         }
                     }
@@ -63,10 +84,10 @@
 
             </table>
         }
+
     </section>
 
 </div>
-
 
 @code {
 
@@ -75,22 +96,22 @@
 
     protected override async Task OnInitializedAsync()
     {
-        try
-        {
-            var response = await OrderService.GetOrdersAsync();
-
-            if (response is not null)
-                orders = response.Orders;
-        }
-        finally
-        {
-            loading = false;
-        }
+        await LoadOrders();
     }
 
-    private void GoToCreateOrder()
+    private async Task LoadOrders()
     {
-        Nav.NavigateTo("/menu/");
-    }
+        loading = true;
+        GetOrdersResponse? response = await OrderService.GetOrdersAsync();
+        orders = response!.Orders;
+        loading = false;
+    }          
 
+
+    private async Task DeleteOrder(Guid id)
+    {
+        await OrderService.DeleteOrderAsync(id).HandleToast(Toast, $"Pedido {id} deletado.");
+        orders.RemoveAll(x => x.Id == id);
+        await InvokeAsync(StateHasChanged);
+    }
 }

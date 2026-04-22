@@ -28,8 +28,26 @@ public class OrderService
     {
         var response = await _http.PostAsJsonAsync("Order", request);
 
-        response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+            throw new Exception(error?.Detail ?? "Erro ao processar requisição.");
+        }
 
         return await response.Content.ReadFromJsonAsync<Guid>();
+    }
+
+    public async Task DeleteOrderAsync(Guid orderId)
+    {
+        var response = await _http.DeleteAsync($"Order/{orderId}");
+
+        response.EnsureSuccessStatusCode();
+    }
+
+    public async Task UpdateOrderAsync(Guid id, UpdateOrderRequest request)
+    {
+        var response = await _http.PutAsJsonAsync($"Order/{id}", request);
+
+        response.EnsureSuccessStatusCode();
     }
 }

@@ -1,79 +1,171 @@
-﻿@page "/menu/"
-@using GoodHamburger.Shared.Enum
+﻿@page "/menu"
+@page "/order/{Id:guid}"
+
 @inject MenuService MenuService
+@inject OrderService OrderService
+@inject NavigationManager Nav
+@inject ToastService Toast
 
 <div class="menu-grid">
 
     <div>
-
         @foreach (var category in LeftColumn)
         {
             <section class="menu-section">
-
                 <h2>@category</h2>
 
                 @foreach (var item in menu[category])
                 {
-                    <div class="menu-item">
+                    var selected = IsSelected(item.Id);
+
+                    <div class="menu-item @(selected ? "selected" : "")">
                         <div>
                             <div class="item-name">@item.Name</div>
                             <div class="item-desc">@item.Description</div>
                         </div>
 
-                        <div class="item-price">
-                            @item.Price.ToString("C")
+                        <div class="item-actions">
+                            <div class="item-price">
+                                @item.Price.ToString("C")
+                            </div>
+
+                            <button class="action-btn @(selected ? "remove" : "add")"
+                            @onclick="() => ToggleProduct(item)">
+                                @(selected ? "-" : "+")
+                            </button>
                         </div>
                     </div>
                 }
-
             </section>
         }
-
     </div>
 
     <div>
-
         @foreach (var category in RightColumn)
         {
             <section class="menu-section">
-
                 <h2>@category</h2>
 
                 @foreach (var item in menu[category])
                 {
-                    <div class="menu-item">
+                    var selected = IsSelected(item.Id);
+
+                    <div class="menu-item @(selected ? "selected" : "")">
                         <div>
                             <div class="item-name">@item.Name</div>
                             <div class="item-desc">@item.Description</div>
                         </div>
 
-                        <div class="item-price">
-                            @item.Price.ToString("C")
+                        <div class="item-actions">
+                            <div class="item-price">
+                                @item.Price.ToString("C")
+                            </div>
+
+                            <button class="action-btn @(selected ? "remove" : "add")"
+                            @onclick="() => ToggleProduct(item)">
+                                @(selected ? "-" : "+")
+                            </button>
                         </div>
                     </div>
                 }
-
             </section>
         }
-
     </div>
 
 </div>
 
+@if (productsSelected.Any())
+{
+    <section class="selected-section">
+        <h2>Pedido Selecionado</h2>
+
+        @foreach (var item in productsSelected)
+        {
+            <div class="menu-item selected">
+                <div>
+                    <div class="item-name">@item.Name</div>
+                    <div class="item-desc">@item.Description</div>
+                </div>
+
+                <div class="item-actions">
+                    <div class="item-price">
+                        @item.Price.ToString("C")
+                    </div>
+
+                    <button class="action-btn remove"
+                    @onclick="() => RemoveProduct(item)">
+                        -
+                    </button>
+                </div>
+            </div>
+        }
+    </section>
+}
+
+<div class="save-wrapper">
+    <button class="back-btn" @onclick='() => Nav.NavigateTo("/orders")'>
+        Voltar
+    </button>
+
+    <button class="save-btn" @onclick="SaveOrder">
+        Salvar Pedido
+    </button>
+</div>
+
 @code {
+    [Parameter]
+    public Guid? Id { get; set; }
+
     private Dictionary<ProductCategory, List<ProductDto>> menu = new();
+
+    private List<ProductDto> productsSelected = new();
 
     protected override async Task OnInitializedAsync()
     {
-        var response = await MenuService.GetMenuAsync();
-
-        var products = response?.Products ?? new List<ProductDto>();
-
-        menu = products
-            .GroupBy(p => p.Category)
-            .ToDictionary(g => g.Key, g => g.ToList());
+        await LoadMenu();
     }
 
-    private List<ProductCategory> LeftColumn => menu.Keys.Take(menu.Count / 2 + menu.Count % 2).ToList();
-    private List<ProductCategory> RightColumn => menu.Keys.Skip(menu.Count / 2 + menu.Count % 2).ToList();
+
+    private async Task LoadMenu()
+    {
+        var response = await MenuService.GetMenuAsync().HandleToast(Toast);
+
+        var products = response?.Products ?? new();
+
+        menu = products
+            .GroupBy(x => x.Category)
+            .ToDictionary(x => x.Key, x => x.ToList());
+    }
+
+    private bool IsSelected(Guid productId)
+        => productsSelected.Any(x => x.Id == productId);
+
+    private void ToggleProduct(ProductDto product)
+    {
+        if (IsSelected(product.Id))
+            RemoveProduct(product);
+        else
+            productsSelected.Add(product);
+    }
+
+    private void RemoveProduct(ProductDto product)
+    {
+        var item = productsSelected.FirstOrDefault(x => x.Id == product.Id);
+
+        if (item is not null)
+            productsSelected.Remove(item);
+    }
+
+    private async Task SaveOrder()
+    {
+        var request = new CreateOrderRequest(productsSelected.Select(x => x.Id).ToList());
+        await OrderService.CreateOrderAsync(request).HandleToast(Toast, "Pedido salvo com sucesso!", ToastType.Success);
+        Nav.NavigateTo("/orders");
+    }
+
+    private List<ProductCategory> LeftColumn =>
+        menu.Keys.Take(menu.Count / 2 + menu.Count % 2).ToList();
+
+    private List<ProductCategory> RightColumn =>
+        menu.Keys.Skip(menu.Count / 2 + menu.Count % 2).ToList();
 }

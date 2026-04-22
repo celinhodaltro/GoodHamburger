@@ -1,0 +1,43 @@
+﻿@inject GoodHamburger.Presentation.Services.ToastService ToastService
+@implements IDisposable
+
+@if (visible)
+{
+    <div class="toast-container">
+        <div class="toast-box @(type.ToString().ToLower())">
+            @message
+        </div>
+    </div>
+}
+
+@code {
+    private bool visible;
+    private string message = "";
+    private ToastType type = ToastType.Info;
+
+
+    protected override void OnInitialized()
+    {
+        ToastService.OnShow += ShowToast;
+    }
+
+    private async void ShowToast(string msg, ToastType toastType)
+    {
+        message = msg;
+        type = toastType;
+        visible = true;
+
+        await InvokeAsync(StateHasChanged);
+
+        await Task.Delay(3500);
+
+        visible = false;
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        ToastService.OnShow -= ShowToast;
+    }
+}

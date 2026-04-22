@@ -1,4 +1,5 @@
-﻿@inherits LayoutComponentBase
+﻿@using GoodHamburger.Presentation.Shared
+@inherits LayoutComponentBase
 @inject NavigationManager Nav
 
 <div class="menu-wrapper">
@@ -33,7 +34,7 @@
     @Body
 
 </div>
-
+<Toast />
 @code {
     private void GoDefault()
     {
@@ -47,6 +48,5 @@
         var url when url.Contains("/menu") => "MENU",
         _ => "GOOD HAMBURGER"
     };
-
-
 }
+
