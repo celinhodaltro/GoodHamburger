@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
 using GoodHamburger.Domain.Entities;
-using GoodHamburger.Domain.Enum;
 using GoodHamburger.Domain.Exceptions;
 using GoodHamburger.Domain.Rules;
+using GoodHamburger.Shared.Enum;
 using Xunit;
 
 namespace GoodHamburger.Tests.Domain;
